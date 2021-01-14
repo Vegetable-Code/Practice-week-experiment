@@ -4,9 +4,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-//账号为admin 密码为admin
-// 图书信息
-struct type {
+struct type{
 	char ISBN[100]; // 登录号
 	char name[100]; // 书名 	
 	char author[100]; // 作者名 
@@ -15,11 +13,10 @@ struct type {
 	char date[100]; // 出版时间
 	float price; // 价格  
 	struct type *next;	
-}Book;
-
+} Book;
 typedef struct type * Books;
 
-// 颜色函数
+// 字体颜色函数 
 void color(short x) {
     if(x >= 0 && x <= 15)
     	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), x);
@@ -27,12 +24,12 @@ void color(short x) {
     	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
 }
 
-// 数据读取函数
+// 读取数据
 void Read(Books *head) {
     int n;
     Books q, p;
     FILE *fp;
-    fp=fopen("Data.txt","r");
+    fp=fopen("Data.txt", "r");
     if(NULL == fp) { 
         head = NULL; 
         return ;
@@ -41,56 +38,57 @@ void Read(Books *head) {
     p = *head;
  	while (!feof(fp)) {
         q = (Books)calloc(1, sizeof(Book));
-		fscanf(fp, "%s", q -> ISBN); /* 为下个结点分配内存空间 */
+		fscanf(fp, "%s", q -> ISBN); // 为下个结点分配内存空间 
 		fscanf(fp, "%s", q -> name);
 		fscanf(fp, "%s", q -> author);
 		fscanf(fp, "%s", q -> classification);
 		fscanf(fp, "%s", q -> publish);
 		fscanf(fp, "%s", q -> date);
-		fscanf(fp, "%f\n",&q -> price);
-		p->next=q; /* 保存该结点 */
-		p=p->next; /* 切换到下一个结点 */
-		p->next=NULL; /* 保证最后一个结点为NULL */
+		fscanf(fp, "%f\n", &q -> price);
+		p->next=q; // 保存该结点
+		p=p->next; // 切换到下一个结点
+		p->next=NULL; // 保证最后一个结点为NULL
 	}
-    fclose(fp); /* 关闭文件 */
+    fclose(fp); // 关闭文件 
     return ; 
 }
 
 void Save(Books head) {
 	Books p;
 	FILE *fp;
-	fp = fopen("Data.txt","w");
+	fp = fopen("Data.txt", "w");
 	p = head;
 	while(p != NULL){
-		fprintf(fp,"%s\t", p -> ISBN);
-		fprintf(fp,"%s\t", p -> name);
-		fprintf(fp,"%s\t", p -> author);
-		fprintf(fp,"%s\t", p -> classification);
-		fprintf(fp,"%s\t", p -> publish);
-		fprintf(fp,"%s\t", p -> date);
-		fprintf(fp,"%.2f\n", p -> price);
-	    p = p -> next;
+		fprintf(fp, "%s\t", p -> ISBN);
+		fprintf(fp, "%s\t", p -> name);         
+		fprintf(fp, "%s\t", p -> author);          
+		fprintf(fp, "%s\t", p -> classification);
+		fprintf(fp, "%s\t", p -> publish);
+		fprintf(fp, "%s\t", p -> date);
+		fprintf(fp, "%.2f\n", p -> price);
+	    p = p -> next;                
 	}
 	fclose(fp);
 	return;
 }
 
-// 口令验证
+// 密码验证函数 
+// 账号为admin 密码为admin 
 int password() {
-	int i=0;
+	int i = 0;
 	char user[20] = "admin";
 	char code[20] = "admin";
-	char getuser[20];
-	char getcode[20];
+	char getUser[20];
+	char getCode[20];
 	while(1) {
 		printf("\t\t\t请输入账号：");
-		scanf("%s", getuser);
+		scanf("%s",getUser);
 		printf("\t\t\t请输入密码：");
 		while(1) {
-			getcode[i] = getch();//隐藏输入
-			if(getcode[i] == '\r')//退格
+			getCode[i] = getch(); // 隐藏输入
+			if(getCode[i] == '\r') // 退格
 			break;
-			else if(getcode[i] == '\b') {
+			else if(getCode[i] == '\b') {
 				if(i == 0)
 				continue;
 				printf("\b");
@@ -103,19 +101,19 @@ int password() {
 				i++;
 			}
 		}
-		getcode[i] = '\0';
-		if(strcmp(user, getuser) == 0 && strcmp(code, getcode) == 0) {
-            printf("\n\n\t\t\t密码正确，请稍等");
-            printf(".");
-            Sleep(300);
-            printf(".");
-            Sleep(300);
-            printf(".");
-            Sleep(300);
-            printf(".");
-            Sleep(300);
-            return 1;
-        }
+		getCode[i] = '\0';
+		if(strcmp(user, getUser) == 0 && strcmp(code, getCode) == 0) {
+			printf("\n\n\t\t\t密码正确，请稍等");
+			printf(".");
+			Sleep(300);
+			printf(".");
+			Sleep(300);
+			printf(".");
+			Sleep(300);
+			printf(".");
+			Sleep(300);
+			return 1;
+		}
 		else {
 			printf("\n\n\t\t\t账号不存在或密码输入错误，请重新输入\n");
 			i = 0;
@@ -123,9 +121,9 @@ int password() {
 	}
 }
 
-// 菜单界面
+// 菜单界面 
 void menu() {
-	system("cls");//清屏
+	system("cls"); // 清屏
 	printf("\n\n");
 	color(3); printf("\t************************************************************\n");
     color(3); printf("\t*                                                          *\n");
@@ -148,51 +146,53 @@ void menu() {
     color(3); printf("\t*                                                          *\n");
 	color(3); printf("\t*                     7.保存数据并退出系统                 *\n"); 
     color(3); printf("\t*                                                          *\n");
-    color(3); printf("\t************************************************************\n\n");
+    color(3); printf("\t**********************************************************\n\n");
 }
 
+// 添加图书函数 
 void Add(Books *head) {
 	int i;
 	Books p, q;
-	p=*head;
-	system("cls");                            
-   	if(*head != NULL) {
-    	while(p->next) 
-        	p = p->next; 
+	p = *head;
+	system("cls");                           
+   if(*head != NULL) {
+       while(p -> next) 
+          p = p -> next; 
     }
     printf("\n\n");
     printf("\t************************************************************\n");
     printf("\t添加几本书？:");
-    scanf("%d",&i);
+    scanf("%d", &i);
     printf("\t************************************************************\n");
     while(i) {
-		q = (Books)calloc(1,sizeof(Book));
+		q = (Books)calloc(1, sizeof(Book));
     	printf("\t请输入登录号:");
-    	scanf("%s",q->ISBN);
+    	scanf("%s", q -> ISBN);
     	printf("\t--------------------------------------------------------\n");
 		printf("\t请输入书名:");
-		scanf("%s",q->name);
+		scanf("%s", q -> name);
 		printf("\t--------------------------------------------------------\n");
 		printf("\t请输入作者名:");
-		scanf("%s",q->author);
+		scanf("%s", q -> author);
 		printf("\t--------------------------------------------------------\n");
 		printf("\t请输入分类号:");
-		scanf("%s",q->classification);
+		scanf("%s", q -> classification);
 		printf("\t--------------------------------------------------------\n");
 		printf("\t请输入出版单位:");
-		scanf("%s",q->publish);
+		scanf("%s", q -> publish);
 		printf("\t--------------------------------------------------------\n");
 		printf("\t请输入出版时间:");
-		scanf("%s",q->date);
+		scanf("%s", q -> date);
 		printf("\t--------------------------------------------------------\n");
 		printf("\t请输入价格:");
-		scanf("%f",&q->price);
+		scanf("%f", &q -> price);
 		printf("\n");
 		printf("\t************************************************************\n");
-		if(*head==NULL) *head = p = q;
+		if(*head == NULL)
+			*head=p=q;
 		else {
 			p -> next = q;
-			p = p->next;
+			p = p -> next;
 		}
 		p -> next = NULL;
     	i--;
@@ -200,15 +200,14 @@ void Add(Books *head) {
 	printf("\t书本添加成功!\n");
 	printf("\t************************************************************\n");
 	q = *head;
-	do
-	{
-	printf("\t%s\t%s\t%s\t%s\t%s\t%s\t%.2f\n",q->ISBN,q->name,q->author,q->classification,q->publish,q->date,q->price);
-	q = q -> next;
-	}while(q != NULL);
+	do {
+		printf("\t%s\t%s\t%s\t%s\t%s\t%s\t%.2f\n", q -> ISBN, q -> name, q -> author, q -> classification, q -> publish, q -> date, q -> price);
+		q = q -> next;
+	} while(q != NULL);
 	system("pause");
 }
 
-// 查询函数
+// 查询图书函数 
 int Find(Books head) {
 	system("cls");
 	int choice ,i = 0;
@@ -233,10 +232,9 @@ int Find(Books head) {
 		scanf("%d",&choice);
 		printf("\t************************************************************\n");
 		p = head;
-		if(choice == 1)
-		{
+		if(choice == 1) {
 			printf("\t请输入书名");
-			scanf("%s",j);
+			scanf("%s", j);
 			printf("\t--------------------------------------------------------\n");
 			while(p -> next) {
 				p = p -> next;
@@ -244,44 +242,42 @@ int Find(Books head) {
 					i = 1;
 					printf("\t\t\tISBN\t书名\t作者名\t分类号\t出版单位\t出版时间\t价格\n");
 					printf("\t--------------------------------------------------------\n");
-					printf("\t\t\t%s\t%s\t%s\t%s\t%s\t%s\t%.2f\n", p -> ISBN,p -> author, p -> classification, p -> publish, p -> date, &p -> price);
+					printf("\t\t\t%s\t%s\t%s\t%s\t%s\t%s\t%.2f\n", p -> ISBN, p -> name, p -> author, p -> classification, p -> publish, p -> date, p -> price);
 					system("pause");
 				}
 			}
-			if(i == 0) printf("不存在\n");
+			if(i == 0)
+				printf("不存在\n");
 		}
 		else if(choice == 2) {
 			printf("\t请输入作者名");
-			scanf("%s",j);
+			scanf("%s", j);
 			printf("\t--------------------------------------------------------\n");
 			while(p -> next) {
 				p = p -> next;
-				if(strcmp(j, p -> author) == 0)
-				{
+				if(strcmp(j, p -> author) == 0) {
 					i = 1;
-					printf("\t\t\tISBN\t书名\t作者名\t分类号\t出版单位\t出版时间\t价格\n");
+					printf("\tISBN\t书名\t作者名\t分类号\t出版单位\t出版时间\t价格\n");
 					printf("\t--------------------------------------------------------\n");
-					printf("\t\t\t%s\t%s\t%s\t%s\t%s\t%s\t%.2f\n", p -> ISBN, p -> name, p -> author, p -> classification, p -> publish, p -> date, &p -> price);
+					printf("\t%s\t%s\t%s\t%s\t%s\t%s\t%.2f\n", p -> ISBN, p -> name, p -> author, p -> classification, p -> publish, p -> date, p -> price);
 					system("pause");
 				}
 			}
 			if(i == 0)
 			printf("\t不存在\n");
 		}
-		else if(choice == 3)
-		{
+		else if(choice == 3) {
 			return 1;
 			system("pause");
 		}
-		else
-		{
+		else {
 			printf("\t请输入1-3!:");
 			scanf("%d", &choice);
 		}
-	}while(choice != 1 || choice != 2 || choice != 3);
+	} while(choice != 1 || choice !=2 || choice !=3);
 }
 
-// 删除函数
+// 删除图书函数 
 void Delet(Books head) {
 	system("cls");
 	int i = 0;
@@ -296,12 +292,12 @@ void Delet(Books head) {
 	printf("\t请输入要删除的书的登录号:");
 	scanf("%s", ISBN);
 	printf("\t--------------------------------------------------------\n");
-	printf("\t\t\tISBN\t书名\t作者名\t分类号\t出版单位\t出版时间\t价格\n");
+	printf("\tISBN\t书名\t作者名\t分类号\t出版单位\t出版时间\t价格\n");
 	printf("\t--------------------------------------------------------\n");
 	while(p -> next) {
 		q = p;
 		p = p -> next;                                               /*转换到下一个结点*/
-	    if(strcmp(ISBN, p -> ISBN) == 0) {
+	    if(strcmp(ISBN, p -> ISBN)==0) {
 	    	i = 1;
 	    	printf("\t\t\t%s\t%s\t%s\t%s\t%s\t%s\t%.2f\n", p -> ISBN, p -> name, p -> author, p -> classification, p -> publish, p -> date, &p -> price);
 			break;
@@ -316,17 +312,18 @@ void Delet(Books head) {
 			free(p); 
 			printf("\t该书已删除！\n");
 		}
-		else system("pause");
+		else
+		    system("pause");
 	}
 	else if(i == 0)
-	    printf("\t没找到那本书！\n");
+	    printf("\t没找到那本书！\n"); 
 	system("pause");
 }
 
-// 修改函数
-void change(Books head) {
+// 修改图书函数 
+void change(Books head)                                     {
 	system("cls");
-	int i = 0,j;
+	int i = 0, j;
 	char name[100], k[10];
 	Books p, q;
 	/* 如果表头为空 */
@@ -341,7 +338,7 @@ void change(Books head) {
 	scanf("%s", name);
 	printf("\t--------------------------------------------------------------------\n");
 	while(p -> next) {
-		p = p -> next; /*切换到下一个结点*/
+		p = p -> next; // 切换到下一个结点
 	    if(strcmp(name, p -> name) == 0) {
 	    	i = 1;
 	    	q = p;
@@ -410,7 +407,6 @@ void change(Books head) {
 		    system("pause");
 		}
 	}
-	
 	else if(i == 0)
 	    printf("\t对不起，该书库没有该书\n");
 	system("pause");
@@ -418,26 +414,24 @@ void change(Books head) {
 
 void show(Books head) {
 	Books p;
-	system("cls");
+	system("cls");	
 	/**如果表头为空 */
     if(head == NULL || head -> next == NULL) {
         printf("\t没有记录图书信息！\n");
         system("pause");
         return ;
     }
-	
-    p = head -> next;
+    p = head;
     printf("\n\n\n");
     printf("\t************************************************************\n");
 	printf("\t图书列表\n");
     printf("\t--------------------------------------------------------------------\n");
-	printf("\t\t\tISBN\t书名\t作者名\t分类号\t出版单位\t出版时间\t价格\n");
+	printf("\tISBN\t书名\t作者名\t分类号\t出版单位\t出版时间\t价格\n");
 	printf("\t--------------------------------------------------------------------\n");
 	do {
-	    printf("\t\t\t%s\t%s\t%s\t%s\t%s\t%s\t%.2f\n", p -> ISBN, p -> name, p -> author, p -> classification, p -> publish, p -> date, p -> price);
-	    p = p -> next;
-	}while(p != NULL);
-	
+	    printf("\t%s\t%s\t%s\t%s\t%s\t%s\t%.2f\n", p -> ISBN, p -> name, p -> author, p -> classification, p -> publish, p -> date, p -> price);
+	    p = p -> next;                           
+	} while(p != NULL);
 	system("pause");
 }
 
@@ -455,32 +449,32 @@ int main() {
 	Read(&head);
 	z = password();
 	menu();
-	while (printf("\t请输入选择项(1-7):") && z == 1 && scanf("%d", &choice) != EOF) {
+	while (printf("\t请输入选择项(1-7)：") && z == 1 && scanf("%d", &choice) != EOF) {
 	    switch (choice) {
-    		case 1:// 录入
+    		case 1: // 录入
 					Add(&head);
 					break;
-			case 2:// 查询
+			case 2: // 查询 
 					 Find(head);
 					 break;
-			case 3:// 删除
+			case 3: // 删除
 			 		Delet(head);
 			 		break;
-			case 4:// 修改
+			case 4: // 修改
 					change(head);
 					break;
-			case 5:// 显示所有
+			case 5: // 显示所有
 					show(head);
 					break;
-			case 6:// 返回登陆界面
+			case 6: // 返回登陆界面 
 					system("cls");
 					main();
 					break; 
-			case 7:// 保存退出
+			case 7://保存退出
 					Save(head);
 					exit(0); 
-			default:
-					printf("输入错误!");
+			default: // 错误提示 
+					printf("没有该功能!");
 					system("pause");
 					break;
     	}
